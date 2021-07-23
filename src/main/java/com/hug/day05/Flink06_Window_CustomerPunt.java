@@ -51,7 +51,7 @@ public class Flink06_Window_CustomerPunt {
 
         env.execute();
     }
-    // 自定义周期性的Watermark生成器
+    // 自定义间歇性的Watermark生成器
     public static class MyPeriod implements WatermarkGenerator<WaterSensor> {
 
         private Long maxTs;

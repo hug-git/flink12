@@ -39,7 +39,7 @@ public class Flink08_Window_SideOutput {
 
         env.execute();
     }
-    // 自定义周期性的Watermark生成器
+
     public static class SplitProcessFunc extends ProcessFunction<WaterSensor, WaterSensor> {
 
         @Override
@@ -62,7 +62,7 @@ public class Flink08_Window_SideOutput {
             ctx.timerService().registerEventTimeTimer(ts + 5000L);
         }
 
-        // 定时器出发
+        // 定时器触发
         @Override
         public void onTimer(long timestamp, OnTimerContext ctx, Collector<WaterSensor> out) throws Exception {
             System.out.println("Timer is triggered");

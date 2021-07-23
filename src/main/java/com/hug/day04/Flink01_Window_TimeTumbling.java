@@ -48,15 +48,15 @@ public class Flink01_Window_TimeTumbling {
         // 全量窗口计算
         SingleOutputStreamOperator<Tuple2<String, Integer>> winResult =
                 windowedStream.apply(new WindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>() {
-            @Override
-            public void apply(String key, TimeWindow window, Iterable<Tuple2<String, Integer>> input, Collector<Tuple2<String, Integer>> out) throws Exception {
-                // 取出迭代器的长度
-                ArrayList<Tuple2<String, Integer>> arrayList = Lists.newArrayList(input.iterator());
+                    @Override
+                    public void apply(String key, TimeWindow window, Iterable<Tuple2<String, Integer>> input, Collector<Tuple2<String, Integer>> out) throws Exception {
+                        // 取出迭代器的长度
+                        ArrayList<Tuple2<String, Integer>> arrayList = Lists.newArrayList(input.iterator());
 
-                // 输出数据
-                out.collect(new Tuple2<>(key, arrayList.size()));
-            }
-        });
+                        // 输出数据
+                        out.collect(new Tuple2<>(key, arrayList.size()));
+                    }
+                });
 
         // 使用process
         SingleOutputStreamOperator<Tuple2<String, Integer>> processResult = windowedStream.process(new ProcessWindowFunction<Tuple2<String, Integer>, Tuple2<String, Integer>, String, TimeWindow>() {
@@ -94,14 +94,14 @@ public class Flink01_Window_TimeTumbling {
         }
     }
 
-    public static class MyWindowFunc implements WindowFunction<Integer, Tuple2<String, Integer>,String, TimeWindow> {
+    public static class MyWindowFunc implements WindowFunction<Integer, Tuple2<String, Integer>, String, TimeWindow> {
 
         @Override
         public void apply(String key, TimeWindow window, Iterable<Integer> input, Collector<Tuple2<String, Integer>> out) throws Exception {
 
             Integer next = input.iterator().next();
 
-            out.collect(new Tuple2<>(new Timestamp(window.getStart())+ ":" + key, next));
+            out.collect(new Tuple2<>(new Timestamp(window.getStart()) + ":" + key, next));
         }
     }
 }
