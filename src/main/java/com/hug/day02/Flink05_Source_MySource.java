@@ -46,10 +46,10 @@ public class Flink05_Source_MySource {
             // 读取数据
             String line = reader.readLine();
 
-            while (running) {
+            while (running && line != null) {
                 // 接收数据并发送至Flink系统
                 sourceContext.collect(line);
-                reader.readLine();
+                line = reader.readLine();
             }
         }
 
