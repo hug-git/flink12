@@ -48,10 +48,10 @@ public class Flink02_Window_EventTimeTumbling_LateAndSideOutput {
         WindowedStream<WaterSensor, String, TimeWindow> window
                 = keyedStream.window(TumblingEventTimeWindows.of(Time.seconds(5)))
                 .allowedLateness(Time.seconds(2))
-                .sideOutputLateData(new OutputTag<WaterSensor>("Side"));
+                .sideOutputLateData(new OutputTag<WaterSensor>("Side"){});
 
         SingleOutputStreamOperator<WaterSensor> result = window.sum("vc");
-        DataStream<WaterSensor> side = result.getSideOutput(new OutputTag<WaterSensor>("Side"));
+        DataStream<WaterSensor> side = result.getSideOutput(new OutputTag<WaterSensor>("Side"){});
 
         result.print();
         side.print("side");
