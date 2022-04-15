@@ -30,17 +30,16 @@ public class FlinkSQL13_TableAPI_OverWindow_Unbounded {
         // 开启Over往前无界窗口
         Table result = table.window(Over.partitionBy($("id")).orderBy($("pt")).as("ow"))
                 .select($("id"),
-                        $("vc").sum().over("ow"),
-                        $("id").count().over("ow"));
+                        $("vc").sum().over($("ow")));
         // 开启Over往前两条数据窗口
-        Table result1 = table.window(Over
-                .partitionBy($("id"))
-                .orderBy($("pt"))
-                .preceding(rowInterval(2L))
-                .as("ow"))
-                .select($("id"),
-                        $("vc").sum().over("ow"),
-                        $("id").count().over("ow"));
+//        Table result1 = table.window(Over
+//                .partitionBy($("id"))
+//                .orderBy($("pt"))
+//                .preceding(rowInterval(2L))
+//                .as("ow"))
+//                .select($("id"),
+//                        $("vc").sum().over($("ow")),
+//                        $("id").count().over($("ow1")));
 
         // 将结果表转换为流进行输出
         tableEnv.toAppendStream(result, Row.class).print();

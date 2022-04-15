@@ -2,6 +2,7 @@ package com.hug.day09;
 
 import com.hug.bean.LoginEvent;
 import com.hug.bean.UserBehavior;
+import com.hug.bean.WaterSensor;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.cep.CEP;
@@ -52,12 +53,13 @@ public class Flink01_Practice_LoginFailWithCEP {
 //            }
 //        }).within(Time.seconds(2));
 
+        Pattern<LoginEvent, LoginEvent> start = Pattern.<LoginEvent>begin("start");
         Pattern<LoginEvent, LoginEvent> loginEventPattern = Pattern.<LoginEvent>begin("start").where(new SimpleCondition<LoginEvent>() {
             @Override
             public boolean filter(LoginEvent value) throws Exception {
                 return "fail".equals(value.getEventType());
             }
-        }).times(2)
+        }).times(2) // 默认宽松近邻followedBy
                 .consecutive() // 严格近邻
                 .within(Time.seconds(5));
 
@@ -69,6 +71,7 @@ public class Flink01_Practice_LoginFailWithCEP {
 
             @Override
             public String select(Map<String, List<LoginEvent>> pattern) throws Exception {
+                // Map<String, List<LoginEvent>> <==> ["start" -> (times个loginEvent,...)]
                 // 取出数据
                 LoginEvent start = pattern.get("start").get(0);
 //                LoginEvent next = pattern.get("next").get(0);

@@ -30,8 +30,8 @@ public class FlinkSQL04_Source_Kafka {
                 .withSchema(new Schema()
                         .field("id", DataTypes.STRING())
                         .field("ts", DataTypes.BIGINT())
-                        .field("vc", DataTypes.INT()))
-                .withFormat(new Csv())
+                        .field("vc", DataTypes.INT())) //StreamTableDescriptor extends ConnectTableDescriptor
+                .withFormat(new Csv()) //ConnectTableDescriptor
                 .createTemporaryTable("sensor");
 
         // 使用连接器创建表

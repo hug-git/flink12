@@ -40,6 +40,7 @@ public class FlinkSQL01_StreamToTable_Agg {
 
         // 将selectTable转换为流进行输出
         DataStream<Tuple2<Boolean, Row>> tuple2DataStream = tableEnv.toRetractStream(selectTable, Row.class);
+//        DataStream<Row> rowDataStream = tableEnv.toAppendStream(selectTable, Row.class);
         tuple2DataStream.print();
 
         env.execute();

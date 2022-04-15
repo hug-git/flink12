@@ -136,7 +136,7 @@ public class Flink_UserVisitor_BloomFilter {
             long result = 0L;
 
             for (char c : value.toCharArray()) {
-                result += result * 31;
+                result += result * 31 + c;
             }
 
             // 取模

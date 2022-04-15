@@ -32,6 +32,7 @@ public class FlinkSQL09_SQL_Test {
 
         // 使用SQL查询未注册的表
         Table result = tableEnv.sqlQuery("select id,ts,vc from " + sensorTable + " where id = 'ws_001'");
+        result.printSchema();
 
         // 2.使用注册表
         tableEnv.createTemporaryView("sensor", waterSensorDS);
@@ -41,6 +42,6 @@ public class FlinkSQL09_SQL_Test {
         // 将表对象转换为流进行打印输出
         tableEnv.toAppendStream(result, Row.class).print();
 
-
+        env.execute();
     }
 }

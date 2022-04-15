@@ -33,7 +33,12 @@ public class Flink06_Window_CustomerPunt {
             public WatermarkGenerator<WaterSensor> createWatermarkGenerator(WatermarkGeneratorSupplier.Context context) {
                 return new MyPeriod(2000L);
             }
-        };
+        }.withTimestampAssigner(new SerializableTimestampAssigner<WaterSensor>() {
+            @Override
+            public long extractTimestamp(WaterSensor element, long recordTimestamp) {
+                return element.getTs() * 1000;
+            }
+        });
 
         SingleOutputStreamOperator<WaterSensor> waterSensorSingleOutputStreamOperator
                 = waterSensorDS.assignTimestampsAndWatermarks(waterSensorWatermarkStrategy);

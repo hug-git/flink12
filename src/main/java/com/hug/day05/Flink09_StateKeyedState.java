@@ -62,11 +62,12 @@ public class Flink09_StateKeyedState {
             reducingState = getRuntimeContext().getReducingState(new ReducingStateDescriptor<WaterSensor>("reducing-state", new ReduceFunction<WaterSensor>() {
                 @Override
                 public WaterSensor reduce(WaterSensor value1, WaterSensor value2) throws Exception {
-                    return null;
+                    return new WaterSensor(value1.getId(),value2.getTs(),value1.getVc());
                 }
             }, WaterSensor.class));
 
-            aggregatingState = getRuntimeContext().getAggregatingState(new AggregatingStateDescriptor<WaterSensor, Integer, WaterSensor>("aggregating-state", new AggregateFunction<WaterSensor, Integer, WaterSensor>() {
+            aggregatingState = getRuntimeContext().getAggregatingState(
+                    new AggregatingStateDescriptor<WaterSensor, Integer, WaterSensor>("aggregating-state", new AggregateFunction<WaterSensor, Integer, WaterSensor>() {
                 @Override
                 public Integer createAccumulator() {
                     return null;

@@ -44,7 +44,6 @@ public class Flink01_Window_Tumbling {
                 = waterSensorSingleOutputStreamOperator.keyBy(WaterSensor::getId);
 
         WindowedStream<WaterSensor, String, TimeWindow> window
-
                 = keyedStream.window(TumblingEventTimeWindows.of(Time.seconds(5)));
 
         SingleOutputStreamOperator<WaterSensor> result = window.sum("vc");

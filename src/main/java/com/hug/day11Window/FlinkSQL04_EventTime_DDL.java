@@ -13,10 +13,11 @@ public class FlinkSQL04_EventTime_DDL {
         // 使用DDL的方式指定事件时间字段
         tableEnv.executeSql("create table source_sensor (" +
                 "id string," +
-                "ts bigint" +
-                "rt as to_timestamp(from_unixtime(ts/1000,'yyyy-MM-dd HH:mm:ss'))," +
+                "ts bigint," +
+                "vc int," +
+                "rt as to_timestamp(from_unixtime(ts * 1000,'yyyy-MM-dd HH:mm:ss'))," +
                 "WATERMARK FOR rt AS rt - INTERVAL '5' SECOND" +
-                "vc int,pt as PROCTIME()) with (" +
+                ") with (" +
                 "'connector' = 'kafka'" +
                 "'topic' = 'topic_source'," +
                 "'properties.bootstrap.servers' = 'hadoop102:9092,hadoop103:9092,hadoop104:9092'," +

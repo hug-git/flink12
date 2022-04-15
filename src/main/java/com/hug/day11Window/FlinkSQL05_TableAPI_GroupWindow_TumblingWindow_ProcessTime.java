@@ -30,25 +30,26 @@ public class FlinkSQL05_TableAPI_GroupWindow_TumblingWindow_ProcessTime {
                 $("vc"),
                 $("pt").proctime());
 
+
         // 开滚动窗口计算WordCount
-        Table result = table.window(Tumble.over(lit(5).seconds()).on($("pt")).as($("pt")))
+        Table result = table.window(Tumble.over(lit(5).seconds()).on($("pt")).as($("tw")))
                 .groupBy($("id"), $("tw"))
                 .select($("id"), $("id").count());
         // 开滑动窗口计算WordCount
-        Table result1 = table.window(Slide.over(lit(5).seconds()).every((lit(2))).on($("pt")).as($("pt")))
-                .groupBy($("id"), $("tw"))
+        Table result1 = table.window(Slide.over(lit(5).seconds()).every((lit(2).seconds())).on($("pt")).as($("sw")))
+                .groupBy($("id"), $("sw"))
                 .select($("id"), $("id").count());
         // 开会话窗口计算WordCount
         Table result2 = table.window(Session.withGap(lit(5).seconds()).on($("pt")).as($("sw")))
-                .groupBy($("id"), $("tw"))
+                .groupBy($("id"), $("sw"))
                 .select($("id"), $("id").count());
         // 开计数滚动窗口计算WordCount
-        Table result3 = table.window(Tumble.over(rowInterval(5L)).on($("pt")).as($("sw")))
-                .groupBy($("id"), $("tw"))
+        Table result3 = table.window(Tumble.over(rowInterval(5L)).on($("pt")).as($("cw")))
+                .groupBy($("id"), $("cw"))
                 .select($("id"), $("id").count());
         // 开计数滑动窗口计算WordCount 注: 12版本sql初始5条才输出
-        Table result4 = table.window(Slide.over(rowInterval(5L)).every((rowInterval(2L))).on($("pt")).as($("sw")))
-                .groupBy($("id"), $("tw"))
+        Table result4 = table.window(Slide.over(rowInterval(5L)).every((rowInterval(2L))).on($("pt")).as($("cw")))
+                .groupBy($("id"), $("cw"))
                 .select($("id"), $("id").count());
 
         // 将结果表转换为流进行输出

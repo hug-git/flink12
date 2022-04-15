@@ -10,7 +10,8 @@ public class FlinkSQL11_KafkaToKafka {
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env);
 
         // 注册source_sensor
-        tableEnv.executeSql("create table source_sensor (id string,vc int) with (" + "'connector' = 'kafka'" +
+        tableEnv.executeSql("create table source_sensor (id string,vc int) with (" +
+                "'connector' = 'kafka'," +
                 "'topic' = 'topic_source'," +
                 "'properties.bootstrap.servers' = 'hadoop102:9092,hadoop103:9092,hadoop104:9092'," +
                 "'properties.group.id' = 'testGroup'," +
@@ -21,17 +22,16 @@ public class FlinkSQL11_KafkaToKafka {
 
         // 注册sink_sensor
         tableEnv.executeSql("create table sink_sensor (id string,vc int) with (" +
-                "'connector' = 'kafka'" +
+                "'connector' = 'kafka'," +
                 "'topic' = 'topic_sink'," +
-                "'properties.bootstrap.servers' = 'hadoop102:9092,hadoop104:9092'," +
+                "'properties.bootstrap.servers' = 'hadoop102:9092,hadoop103:9092,hadoop104:9092'," +
                 "'properties.group.id' = 'testGroup'," +
                 "'scan.startup.mode' = 'earliest-offset'," +
                 "'format' = 'csv'" +
                 ")");
 
         // 执行查询插入数据
-        tableEnv.executeSql("insert into sink_sensor select * fromm source_sensor where id = 'ws_001'");
+        tableEnv.executeSql("insert into sink_sensor select * from source_sensor where id = 'ws_001'");
 
-        env.execute();
     }
 }

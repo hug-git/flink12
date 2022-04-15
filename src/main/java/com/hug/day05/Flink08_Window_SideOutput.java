@@ -29,9 +29,9 @@ public class Flink08_Window_SideOutput {
         });
 
         // 使用ProcessFunction将数据分流
-        SingleOutputStreamOperator<WaterSensor> result = waterSensorDS.process(new SplitProcessFunc());
+        SingleOutputStreamOperator<WaterSensor> result = waterSensorDS.keyBy(WaterSensor::getId).process(new SplitProcessFunc());
 
-        DataStream<WaterSensor> sideOut = result.getSideOutput(new OutputTag<WaterSensor>("SideOut"));
+        DataStream<Tuple2<String,Integer>> sideOut = result.getSideOutput(new OutputTag<Tuple2<String,Integer>>("SideOut"){});
 
         sideOut.print("Side");
 
@@ -53,19 +53,20 @@ public class Flink08_Window_SideOutput {
                 out.collect(value);
             } else {
                 // 将数据输出至侧输出流
-                ctx.output(new OutputTag<Tuple2<String, Integer>>("SideOut") {},
+                ctx.output(new OutputTag<Tuple2<String, Integer>>("SideOut"){},
                         new Tuple2<>(value.getId(), vc));
             }
 
-            // 定时器
+            // 定时器（非keyed streams不支持）
             long ts = ctx.timerService().currentProcessingTime();
-            ctx.timerService().registerEventTimeTimer(ts + 5000L);
+            System.out.println("注册定时器->" + (ts + 5000L));
+            ctx.timerService().registerProcessingTimeTimer(ts + 5000L);
         }
 
         // 定时器触发
         @Override
         public void onTimer(long timestamp, OnTimerContext ctx, Collector<WaterSensor> out) throws Exception {
-            System.out.println("Timer is triggered");
+            System.out.println("Timer " + timestamp + " is triggered");
         }
     }
 }
