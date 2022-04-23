@@ -5,6 +5,7 @@ import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.state.*;
+import org.apache.flink.api.common.time.Time;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.datastream.KeyedStream;
@@ -56,6 +57,13 @@ public class Flink09_StateKeyedState {
 
         @Override
         public void open(Configuration parameters) throws Exception {
+            // 设置状态过期时间
+            ValueStateDescriptor<Long> stateDescriptor = new ValueStateDescriptor<>("value-state", Long.class);
+            StateTtlConfig ttl = StateTtlConfig.newBuilder(Time.seconds(10))
+                    .setUpdateType(StateTtlConfig.UpdateType.OnCreateAndWrite)
+                    .build();
+            stateDescriptor.enableTimeToLive(ttl);
+            // 状态
             valueState = getRuntimeContext().getState(new ValueStateDescriptor<Long>("value-state", Long.class));
             listState = getRuntimeContext().getListState(new ListStateDescriptor<Long>("list-state", Long.class));
             mapState = getRuntimeContext().getMapState(new MapStateDescriptor<String, Long>("map-state", String.class, Long.class));
