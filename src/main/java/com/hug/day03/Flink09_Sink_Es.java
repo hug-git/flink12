@@ -33,9 +33,10 @@ public class Flink09_Sink_Es {
         // 将数据写入ES
         ArrayList<HttpHost> httpHosts = new ArrayList<>();
         httpHosts.add(new HttpHost("hadoop102", 9200));
-        ElasticsearchSink.Builder<WaterSensor> waterSensorBuilder =
-                new ElasticsearchSink.Builder<WaterSensor>(httpHosts, new MyEsSinkFunc());
+        ElasticsearchSink<WaterSensor> esSink
+                = new ElasticsearchSink.Builder<WaterSensor>(httpHosts, new MyEsSinkFunc()).build();
 
+        waterSensorDS.addSink(esSink);
 
         env.execute();
     }
